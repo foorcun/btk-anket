@@ -45,10 +45,19 @@ class SurveyListState extends State {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return buildBody(context, sahteSnapshot);
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection("dilanketi").snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return LinearProgressIndicator();
+        } else {
+          return buildBody(context, snapshot.data.documents);
+        }
+      },
+    );
   }
 
-  Widget buildBody(BuildContext context, Set<Map> snapshot) {
+  Widget buildBody(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
       padding: EdgeInsets.only(top: 20.0),
       children:
@@ -56,8 +65,8 @@ class SurveyListState extends State {
     );
   }
 
-  buildListItem(BuildContext context, Map data) {
-    final row = Anket.fromMap(data);
+  buildListItem(BuildContext context, DocumentSnapshot data) {
+    final row = Anket.fromSnapshot(data);
     var borderRadius2 = BorderRadius.circular(5.0);
     return Padding(
       key: ValueKey(row.isim),
@@ -69,7 +78,7 @@ class SurveyListState extends State {
         child: ListTile(
           title: Text(row.isim),
           trailing: Text(row.oy.toString()),
-          onTap: () => print(row),
+          onTap: () => print(row.isim),
         ),
       ),
     );
