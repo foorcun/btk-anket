@@ -67,7 +67,7 @@ class SurveyListState extends State {
 
   buildListItem(BuildContext context, DocumentSnapshot data) {
     final row = Anket.fromSnapshot(data);
-    var borderRadius2 = BorderRadius.circular(5.0);
+    //var borderRadius2 = BorderRadius.circular(5.0);
     return Padding(
       key: ValueKey(row.isim),
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -78,7 +78,14 @@ class SurveyListState extends State {
         child: ListTile(
           title: Text(row.isim),
           trailing: Text(row.oy.toString()),
-          onTap: () => print(row.isim),
+          //onTap: () => row.reference.updateData({"oy": row.oy + 1}),
+          onTap: () => Firestore.instance.runTransaction((transaction) async {
+            final freshSnapshot = await transaction
+                .get(row.reference); //snapshot(yani datanın) kendisi
+            final fresh = Anket.fromSnapshot(freshSnapshot); // anketin kendisi
+
+            await transaction.update((row.reference), {'oy': fresh.oy + 1});
+          }),
         ),
       ),
     );
