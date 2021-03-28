@@ -33,6 +33,59 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class SurveyList extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return SurveyListState();
+  }
+}
+
+class SurveyListState extends State {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return buildBody(context, sahteSnapshot);
+  }
+
+  Widget buildBody(BuildContext context, Set<Map> snapshot) {
+    return ListView(
+      padding: EdgeInsets.only(top: 20.0),
+      children:
+          snapshot.map<Widget>((data) => buildListItem(context, data)).toList(),
+    );
+  }
+
+  buildListItem(BuildContext context, Map data) {
+    final row = Anket.fromMap(data);
+    var borderRadius2 = BorderRadius.circular(5.0);
+    return Padding(
+      key: ValueKey(row.isim),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(5.0)),
+        child: ListTile(
+          title: Text(row.isim),
+          trailing: Text(row.oy.toString()),
+          onTap: () => print(row),
+        ),
+      ),
+    );
+  }
+}
+
+// sahte data
+final sahteSnapshot = {
+  {"isim": "C#", "oy": 3},
+  {"isim": "Java", "oy": 4},
+  {"isim": "Dart", "oy": 5},
+  {"isim": "C++", "oy": 7},
+  {"isim": "Python", "oy": 90},
+  {"isim": "Perl", "oy": 2},
+};
+
 class Anket {
   String isim;
   int oy;
